@@ -5,6 +5,7 @@ import '../widgets/Products_grid.dart';
 import '../providers/Cart.dart';
 import '../widgets/badge.dart';
 import './cart_screen.dart';
+import '../widgets/costum_drawer.dart';
 
 enum FilterValues {
   ShowAll,
@@ -60,6 +61,7 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
           )
         ],
       ),
+      drawer: CustomDrawer('/'),
       body: Products_grid(showAll),
     );
   }

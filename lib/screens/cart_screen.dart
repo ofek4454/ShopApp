@@ -26,7 +26,7 @@ class CartScreen extends StatelessWidget {
               ),
             ),
           ),
-          PlaceOrderCard(_cart.totalAmount)
+          PlaceOrderCard(_cart.totalAmount , _cart.items.values.toList())
         ],
       ),
     );

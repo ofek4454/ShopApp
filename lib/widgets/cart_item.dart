@@ -12,10 +12,13 @@ class CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _cart = Provider.of<Cart>(context, listen: false);
     return Dismissible(
       key: ValueKey(product.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_){Provider.of<Cart>(context , listen: false).removeItem(product.id);},
+      onDismissed: (_) {
+        _cart.deleteItem(product.id);
+      },
       background: Container(
         alignment: Alignment.centerRight,
         color: Theme.of(context).errorColor,
@@ -44,7 +47,29 @@ class CartItem extends StatelessWidget {
             ),
             title: Text(product.title),
             subtitle: Text('$quantity x \$${product.price}'),
-            trailing: Text('\$${(product.price * quantity)}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.remove, size: 20),
+                  onPressed: () {
+                    if(quantity>1){
+                      _cart.removeItem(product);
+                    } else{
+                      _cart.deleteItem(product.id);
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add,
+                    size: 20,
+                  ),
+                  onPressed: () => _cart.addItem(product),
+                ),
+                Text('\$${(product.price * quantity)}'),
+              ],
+            ),
           ),
         ),
       ),

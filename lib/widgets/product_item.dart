@@ -6,6 +6,11 @@ import '../providers/Cart.dart';
 import '../screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
+
+  final Function changed;
+
+  ProductItem(this.changed);
+
   @override
   Widget build(BuildContext context) {
     final _product = Provider.of<Product>(context, listen: false);
@@ -44,6 +49,7 @@ class ProductItem extends StatelessWidget {
                 ),
                 onPressed: () {
                   product.toggleFavoriteStatus();
+                  changed();
                 },
                 color: Theme.of(context).accentColor,
                 iconSize: 30,
