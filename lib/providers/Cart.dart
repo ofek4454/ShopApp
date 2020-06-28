@@ -41,8 +41,7 @@ class Cart with ChangeNotifier {
     _items.update(
       product.id,
       (value) {
-        if(value.quantity > 1)
-        {
+        if (value.quantity > 1) {
           return CartItem(product: value.product, quantity: value.quantity - 1);
         }
         return value;
@@ -56,8 +55,20 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  void clearCart(){
+  void clearCart() {
     _items = {};
+    notifyListeners();
+  }
+
+  void removeSingleItem(String id) {
+    if(!_items.containsKey(id)){
+      return;
+    }
+    if(_items[id].quantity > 1){
+      _items.update(id, (value) => CartItem(product: value.product , quantity: value.quantity-1));
+    } else {
+      this.deleteItem(id);
+    }
     notifyListeners();
   }
 }

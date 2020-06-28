@@ -4,18 +4,29 @@ import 'package:provider/provider.dart';
 import '../providers/product.dart';
 import '../providers/Cart.dart';
 import '../screens/product_detail_screen.dart';
+import '../providers/products_provider.dart';
+
+enum BuildType {
+  Row,
+  Grid,
+}
 
 class ProductItem extends StatelessWidget {
+  Function changed;
+  BuildType type;
+  Product _product;
 
-  final Function changed;
+  ProductItem.grid(this.changed) {
+    type = BuildType.Grid;
+  }
 
-  ProductItem(this.changed);
+  ProductItem.list(this._product) {
+    type = BuildType.Row;
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildToGrid(BuildContext context) {
     final _product = Provider.of<Product>(context, listen: false);
-    final _cart = Provider.of<Cart>(context ,listen: false);
-
+    final _cart = Provider.of<Cart>(context, listen: false);
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -38,6 +49,17 @@ class ProductItem extends StatelessWidget {
               icon: Icon(Icons.add_shopping_cart),
               onPressed: () {
                 _cart.addItem(_product);
+                Scaffold.of(context).removeCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('product added successfully!'),
+                    duration: Duration(seconds: 2),
+                    action: SnackBarAction(
+                      label: 'undo'.toUpperCase(),
+                      onPressed: () => _cart.removeSingleItem(_product.id),
+                    ),
+                  ),
+                );
               },
               color: Theme.of(context).accentColor,
               iconSize: 30,
@@ -59,5 +81,44 @@ class ProductItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget buildToList(BuildContext context) {
+
+    return ListTile(
+      title: Text(_product.title),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(_product.imageUrl),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {},
+            color: Theme.of(context).primaryColor,
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              Provider.of<ProductsProvider>(context , listen: false).deleteProduct(_product.id);
+            },
+            color: Theme.of(context).errorColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    switch (type) {
+      case BuildType.Grid:
+        return buildToGrid(context);
+        break;
+      case BuildType.Row:
+        return buildToList(context);
+        break;
+    }
   }
 }

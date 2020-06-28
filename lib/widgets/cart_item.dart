@@ -16,6 +16,25 @@ class CartItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(product.id),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('remove ${product.title} from the cart?'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('cancel'),
+                onPressed: () =>Navigator.of(ctx).pop(false),
+              ),
+              FlatButton(
+                child: Text('confirm'),
+                onPressed: () =>Navigator.of(ctx).pop(true),
+              ),
+            ],
+          ),
+        );
+      },
       onDismissed: (_) {
         _cart.deleteItem(product.id);
       },
@@ -53,9 +72,9 @@ class CartItem extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.remove, size: 20),
                   onPressed: () {
-                    if(quantity>1){
+                    if (quantity > 1) {
                       _cart.removeItem(product);
-                    } else{
+                    } else {
                       _cart.deleteItem(product.id);
                     }
                   },

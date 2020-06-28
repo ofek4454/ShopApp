@@ -37,7 +37,7 @@ class _Products_gridState extends State<Products_grid> {
       ),
       itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
         value: _products[index],
-        child: ProductItem(change),
+        child: ProductItem.grid(change),
       ),
     );
   }
