@@ -19,6 +19,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageController = TextEditingController();
   final _form = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isInit = false;
+  var values = {
+    'title': '',
+    'price': '',
+    'description': '',
+    'imageUrl': '',
+  };
+  String prodId = null;
+  bool isFavorite = false;
 
   _Product prod = _Product();
 
@@ -26,6 +35,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void initState() {
     super.initState();
     _imageFocus.addListener(imageListner);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isInit) {
+      var product = ModalRoute.of(context).settings.arguments as Product;
+      if (product != null) {
+        values = {
+          'title': product.title,
+          'price': product.price.toString(),
+          'description': product.description,
+          'imageUrl': '',
+        };
+        _imageController.text = product.imageUrl;
+        prodId = product.id;
+        isFavorite = product.isFavorite;
+      }
+      isInit = true;
+    }
   }
 
   @override
@@ -51,9 +80,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
       price: prod.price,
       description: prod.description,
       imageUrl: prod.imageUrl,
-      id: DateTime.now().toString(),
+      id: prodId != null ? prodId : DateTime.now().toString(),
+      isFavorite: isFavorite,
     );
-    Provider.of<ProductsProvider>(context, listen: false).addProduct(_product);
+    if (prodId != null) {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .updateProduct(_product);
+    } else {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .addProduct(_product);
+    }
     Navigator.of(context).pop();
   }
 
@@ -116,6 +152,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: values['title'],
                 decoration: InputDecoration(
                   hintText: 'Title',
                   contentPadding: EdgeInsets.only(left: 5),
@@ -135,6 +172,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: values['price'],
                 decoration: InputDecoration(
                   hintText: 'Price',
                   contentPadding: EdgeInsets.only(left: 5),
@@ -162,6 +200,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: values['description'],
                 decoration: InputDecoration(
                   hintText: 'Description',
                   contentPadding: EdgeInsets.only(left: 5),
@@ -227,5 +266,10 @@ class _Product {
   double price;
   String imageUrl;
 
-  _Product({this.title, this.description, this.price, this.imageUrl});
+  _Product({
+    this.title,
+    this.description,
+    this.price,
+    this.imageUrl,
+  });
 }

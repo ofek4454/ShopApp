@@ -9,8 +9,8 @@ class ImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10),
-      width: MediaQuery.of(context).size.width * 0.15,
-      height: MediaQuery.of(context).size.width * 0.15,
+      width: MediaQuery.of(context).size.width * 0.25,
+      height: MediaQuery.of(context).size.width * 0.25,
       decoration: BoxDecoration(
         border: Border.all(width: 2, color: Colors.grey),
       ),

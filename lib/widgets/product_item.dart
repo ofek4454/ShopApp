@@ -6,6 +6,7 @@ import '../providers/Cart.dart';
 import '../screens/product_detail_screen.dart';
 import '../providers/products_provider.dart';
 import '../widgets/details_page_body.dart';
+import '../screens/edit_product_screen.dart';
 
 enum BuildType {
   Row,
@@ -126,7 +127,10 @@ class ProductItem extends StatelessWidget {
         children: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed(EditProductScreen.routeName, arguments: _product);
+            },
             color: Theme.of(context).primaryColor,
           ),
           IconButton(
