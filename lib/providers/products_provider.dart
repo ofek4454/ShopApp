@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import './product.dart';
 
-class ProductsProvider with ChangeNotifier{
+class ProductsProvider with ChangeNotifier {
   List<Product> _products = [
     Product(
       id: 'p1',
@@ -39,27 +39,25 @@ class ProductsProvider with ChangeNotifier{
     ),
   ];
 
-  List<Product> get products{
+  List<Product> get products {
     return [..._products];
   }
 
-  List<Product> get favorites{
+  List<Product> get favorites {
     return _products.where((product) => product.isFavorite).toList();
   }
 
-  Product getProductById(String id){
+  Product getProductById(String id) {
     return _products.firstWhere((product) => product.id == id);
   }
 
-  void deleteProduct(String id){
+  void deleteProduct(String id) {
     _products.removeWhere((product) => product.id == id);
     notifyListeners();
   }
 
-  void addProduct(){
-    // _products.add(value);
+  void addProduct(Product product) {
+    _products.add(product);
     notifyListeners();
   }
 }
-
-

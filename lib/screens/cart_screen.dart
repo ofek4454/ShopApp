@@ -17,16 +17,22 @@ class CartScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: _cart.itemCount,
-              itemBuilder: (ctx, index) => CartItem(
-                product: _cart.items.values.toList()[index].product,
-                quantity: _cart.items.values.toList()[index].quantity,
-              ),
-            ),
-          ),
-          PlaceOrderCard(_cart.totalAmount , _cart.items.values.toList())
+          _cart.itemCount == 0
+              ? Expanded(
+                  child: Center(
+                    child: Text('Cart is empty'),
+                  ),
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: _cart.itemCount,
+                    itemBuilder: (ctx, index) => CartItem(
+                      product: _cart.items.values.toList()[index].product,
+                      quantity: _cart.items.values.toList()[index].quantity,
+                    ),
+                  ),
+                ),
+          PlaceOrderCard(_cart.totalAmount, _cart.items.values.toList())
         ],
       ),
     );

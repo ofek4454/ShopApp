@@ -5,6 +5,7 @@ import '../providers/product.dart';
 import '../providers/Cart.dart';
 import '../screens/product_detail_screen.dart';
 import '../providers/products_provider.dart';
+import '../widgets/details_page_body.dart';
 
 enum BuildType {
   Row,
@@ -12,11 +13,10 @@ enum BuildType {
 }
 
 class ProductItem extends StatelessWidget {
-  Function changed;
   BuildType type;
   Product _product;
 
-  ProductItem.grid(this.changed) {
+  ProductItem.grid() {
     type = BuildType.Grid;
   }
 
@@ -32,10 +32,41 @@ class ProductItem extends StatelessWidget {
         Navigator.of(context)
             .pushNamed(ProductDetailScreen.routeName, arguments: _product.id);
       },
+      onLongPress: () {
+        showModalBottomSheet(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          )),
+          context: context,
+          builder: (ctx) => ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+            child: DetailsPageBody(product: _product),
+          ),
+        );
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: GridTile(
-          child: Image.network(_product.imageUrl, fit: BoxFit.cover),
+          child: Image.network(
+            _product.imageUrl,
+            fit: BoxFit.cover,
+            loadingBuilder: (ctx, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes
+                      : null,
+                ),
+              );
+            },
+          ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
             title: FittedBox(
@@ -67,11 +98,12 @@ class ProductItem extends StatelessWidget {
             trailing: Consumer<Product>(
               builder: (ctx, product, child) => IconButton(
                 icon: Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  _product.isFavorite ? Icons.favorite : Icons.favorite_border,
                 ),
                 onPressed: () {
-                  product.toggleFavoriteStatus();
-                  changed();
+                  Scaffold.of(context).setState(() {
+                    product.toggleFavoriteStatus();
+                  });
                 },
                 color: Theme.of(context).accentColor,
                 iconSize: 30,
@@ -84,7 +116,6 @@ class ProductItem extends StatelessWidget {
   }
 
   Widget buildToList(BuildContext context) {
-
     return ListTile(
       title: Text(_product.title),
       leading: CircleAvatar(
@@ -101,7 +132,8 @@ class ProductItem extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
-              Provider.of<ProductsProvider>(context , listen: false).deleteProduct(_product.id);
+              Provider.of<ProductsProvider>(context, listen: false)
+                  .deleteProduct(_product.id);
             },
             color: Theme.of(context).errorColor,
           ),
