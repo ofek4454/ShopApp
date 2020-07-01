@@ -30,7 +30,7 @@ class PlaceOrderCard extends StatelessWidget {
             Chip(
               backgroundColor: Theme.of(context).primaryColor,
               label: Text(
-                '\$$totalAmount',
+                '\$${totalAmount.toStringAsFixed(2)}',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -42,7 +42,7 @@ class PlaceOrderCard extends StatelessWidget {
               onPressed: () {
                 Provider.of<Orders>(context, listen: false)
                     .addOrder(totalAmount, products);
-                Provider.of<Cart>(context , listen: false).clearCart();
+                Provider.of<Cart>(context, listen: false).clearCart();
               },
               child: Text(
                 'place order!'.toUpperCase(),

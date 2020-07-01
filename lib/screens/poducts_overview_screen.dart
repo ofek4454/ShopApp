@@ -6,6 +6,7 @@ import '../providers/Cart.dart';
 import '../widgets/badge.dart';
 import './cart_screen.dart';
 import '../widgets/costum_drawer.dart';
+import '../providers/products_provider.dart';
 
 enum FilterValues {
   ShowAll,
@@ -19,6 +20,29 @@ class ProductsOverViewScreen extends StatefulWidget {
 
 class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
   var showAll = true;
+  var isLoading = false;
+  var isInit = false;
+
+  @override
+  initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isInit) {
+      setState(() {
+        isLoading = true;
+      });
+      setState(() {
+        Provider.of<ProductsProvider>(context).loadProducts().then((_) {
+          isLoading = false;
+        });
+      });
+      isInit = true;
+    }
+  }
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
@@ -67,7 +91,11 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
     return Scaffold(
       appBar: buildAppBar(context),
       drawer: CustomDrawer('/'),
-      body: Products_grid(showAll),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Products_grid(showAll),
     );
   }
 }

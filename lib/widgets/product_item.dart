@@ -102,9 +102,7 @@ class ProductItem extends StatelessWidget {
                   _product.isFavorite ? Icons.favorite : Icons.favorite_border,
                 ),
                 onPressed: () {
-                  Scaffold.of(context).setState(() {
-                    product.toggleFavoriteStatus();
-                  });
+                  product.toggleFavoriteStatus();
                 },
                 color: Theme.of(context).accentColor,
                 iconSize: 30,
@@ -117,6 +115,8 @@ class ProductItem extends StatelessWidget {
   }
 
   Widget buildToList(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    final productsData = Provider.of<ProductsProvider>(context, listen: false);
     return ListTile(
       title: Text(_product.title),
       leading: CircleAvatar(
@@ -135,9 +135,31 @@ class ProductItem extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () {
-              Provider.of<ProductsProvider>(context, listen: false)
-                  .deleteProduct(_product.id);
+            onPressed: () async {
+              final prodIndex = productsData.getProductIndex(_product.id);
+              try {
+                await productsData.deleteProduct(_product.id);
+                scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text('Product deleted successfully!'),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: () {
+                        productsData.insertProduct(
+                          _product,
+                          prodIndex,
+                        );
+                      },
+                    ),
+                  ),
+                );
+              } catch (error) {
+                scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text('Something went wrong, Please try again!'),
+                  ),
+                );
+              }
             },
             color: Theme.of(context).errorColor,
           ),

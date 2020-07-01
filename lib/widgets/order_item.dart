@@ -24,22 +24,29 @@ class _OrderItemState extends State<OrderItem> {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text('\$${widget.order.amount}'),
+            title: Text('\$${widget.order.amount.toStringAsFixed(2)}'),
             subtitle:
                 Text(DateFormat('dd/MM/yyyy HH:mm').format(widget.order.date)),
             trailing: IconButton(
                 icon: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: (){
+                onPressed: () {
                   setState(() {
                     isExpanded = !isExpanded;
                   });
                 }),
           ),
-          if(isExpanded) Divider(height: 10, endIndent: 10, indent: 10, thickness: 2, color: Colors.black38,),
+          if (isExpanded)
+            Divider(
+              height: 10,
+              endIndent: 10,
+              indent: 10,
+              thickness: 2,
+              color: Colors.black38,
+            ),
           if (isExpanded)
             Container(
               margin: EdgeInsets.only(top: 5),
-              height: min(100 + widget.order.products.length *20.0, 180),
+              height: min(100 + widget.order.products.length * 20.0, 180),
               child: ListView.builder(
                 itemCount: widget.order.products.length,
                 itemBuilder: (ctx, index) {
@@ -54,8 +61,8 @@ class _OrderItemState extends State<OrderItem> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                              image: NetworkImage(
-                                  widget.order.products[index].product.imageUrl),
+                              image: NetworkImage(widget
+                                  .order.products[index].product.imageUrl),
                               fit: BoxFit.fitWidth,
                             ),
                           ),
@@ -63,7 +70,8 @@ class _OrderItemState extends State<OrderItem> {
                         title: Text(widget.order.products[index].product.title),
                         subtitle: Text(
                             '${widget.order.products[index].quantity} x \$${widget.order.products[index].product.price}'),
-                        trailing: Text('\$${(widget.order.products[index].product.price * widget.order.products[index].quantity)}'),
+                        trailing: Text(
+                            '\$${(widget.order.products[index].product.price * widget.order.products[index].quantity).toStringAsFixed(2)}'),
                       ),
                     ),
                   );

@@ -75,7 +75,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void confirm() {
+  Future<void> confirm() async {
     setState(() {
       isLoading = true;
     });
@@ -88,17 +88,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
       isFavorite: isFavorite,
     );
     if (prodId != null) {
-      Provider.of<ProductsProvider>(context, listen: false)
+      await Provider.of<ProductsProvider>(context, listen: false)
           .updateProduct(_product);
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
     } else {
-      Provider.of<ProductsProvider>(context, listen: false)
-          .addProduct(_product)
-          .catchError((error) {
-        return showDialog<Null>(
+      try {
+        await Provider.of<ProductsProvider>(context, listen: false)
+            .addProduct(_product);
+      } catch (error) {
+        await showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Something went wrong...'),
@@ -123,13 +120,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      }).then((_) {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.of(context).pop();
-      });
+      }
     }
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   void _saveForm() {
@@ -277,7 +273,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             validator: (val) {
                               if (!val.endsWith('.jpg') &&
                                   !val.endsWith('.png') &&
-                                  !val.endsWith('.gpeg')) {
+                                  !val.endsWith('.jpeg')) {
                                 return 'please enter valid image url';
                               }
                               return null;
