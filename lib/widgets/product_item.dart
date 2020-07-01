@@ -13,7 +13,7 @@ enum BuildType {
   Grid,
 }
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   BuildType type;
   Product _product;
 
@@ -25,7 +25,15 @@ class ProductItem extends StatelessWidget {
     type = BuildType.Row;
   }
 
-  Widget buildToGrid(BuildContext context) {
+  @override
+  _ProductItemState createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  var isLoading = false;
+
+  Widget buildToGrid() {
+    final scaffold = Scaffold.of(context);
     final _product = Provider.of<Product>(context, listen: false);
     final _cart = Provider.of<Cart>(context, listen: false);
     return InkWell(
@@ -81,8 +89,8 @@ class ProductItem extends StatelessWidget {
               icon: Icon(Icons.add_shopping_cart),
               onPressed: () {
                 _cart.addItem(_product);
-                Scaffold.of(context).removeCurrentSnackBar();
-                Scaffold.of(context).showSnackBar(
+                scaffold.removeCurrentSnackBar();
+                scaffold.showSnackBar(
                   SnackBar(
                     content: Text('product added successfully!'),
                     duration: Duration(seconds: 2),
@@ -97,16 +105,45 @@ class ProductItem extends StatelessWidget {
               iconSize: 30,
             ),
             trailing: Consumer<Product>(
-              builder: (ctx, product, child) => IconButton(
-                icon: Icon(
-                  _product.isFavorite ? Icons.favorite : Icons.favorite_border,
-                ),
-                onPressed: () {
-                  product.toggleFavoriteStatus();
-                },
-                color: Theme.of(context).accentColor,
-                iconSize: 30,
-              ),
+              builder: (ctx, product, child) {
+                return isLoading
+                    ? CircularProgressIndicator()
+                    : IconButton(
+                        icon: Icon(
+                          _product.isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                        ),
+                        onPressed: () async {
+                          try {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await product.toggleFavoriteStatus();
+                            scaffold.hideCurrentSnackBar();
+                            scaffold.showSnackBar(SnackBar(
+                              content: Text(product.isFavorite
+                                  ? 'added to wishList successfully!'
+                                  : 'removed from wishList successfully!'),
+                            ));
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } catch (error) {
+                            scaffold.hideCurrentSnackBar();
+                            scaffold.showSnackBar(SnackBar(
+                              content: Text(
+                                  'Something went wrong, Please try again'),
+                            ));
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        },
+                        color: Theme.of(context).accentColor,
+                        iconSize: 30,
+                      );
+              },
             ),
           ),
         ),
@@ -114,13 +151,13 @@ class ProductItem extends StatelessWidget {
     );
   }
 
-  Widget buildToList(BuildContext context) {
+  Widget buildToList() {
     final scaffold = Scaffold.of(context);
     final productsData = Provider.of<ProductsProvider>(context, listen: false);
     return ListTile(
-      title: Text(_product.title),
+      title: Text(widget._product.title),
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(_product.imageUrl),
+        backgroundImage: NetworkImage(widget._product.imageUrl),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -128,17 +165,18 @@ class ProductItem extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(EditProductScreen.routeName, arguments: _product);
+              Navigator.of(context).pushNamed(EditProductScreen.routeName,
+                  arguments: widget._product);
             },
             color: Theme.of(context).primaryColor,
           ),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
-              final prodIndex = productsData.getProductIndex(_product.id);
+              final prodIndex =
+                  productsData.getProductIndex(widget._product.id);
               try {
-                await productsData.deleteProduct(_product.id);
+                await productsData.deleteProduct(widget._product.id);
                 scaffold.showSnackBar(
                   SnackBar(
                     content: Text('Product deleted successfully!'),
@@ -146,7 +184,7 @@ class ProductItem extends StatelessWidget {
                       label: 'UNDO',
                       onPressed: () {
                         productsData.insertProduct(
-                          _product,
+                          widget._product,
                           prodIndex,
                         );
                       },
@@ -170,12 +208,12 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (type) {
+    switch (widget.type) {
       case BuildType.Grid:
-        return buildToGrid(context);
+        return buildToGrid();
         break;
       case BuildType.Row:
-        return buildToList(context);
+        return buildToList();
         break;
     }
   }
