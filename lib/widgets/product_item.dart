@@ -64,6 +64,9 @@ class _ProductItemState extends State<ProductItem> {
           child: Image.network(
             _product.imageUrl,
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Center(
+              child: Text('error while loading image'),
+            ),
             loadingBuilder: (ctx, child, loadingProgress) {
               if (loadingProgress == null) return child;
               return Center(
