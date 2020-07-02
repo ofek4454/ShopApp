@@ -35,8 +35,15 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
       setState(() {
         isLoading = true;
       });
-      setState(() {
-        Provider.of<ProductsProvider>(context).loadProducts().then((_) {
+      Provider.of<ProductsProvider>(context).loadProducts().catchError((error) {
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Error while loading'),
+                  content: Text(error),
+                ));
+      }).then((_) {
+        setState(() {
           isLoading = false;
         });
       });

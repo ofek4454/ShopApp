@@ -38,23 +38,66 @@ class PlaceOrderCard extends StatelessWidget {
               ),
             ),
             Spacer(),
-            FlatButton(
-              onPressed: () {
-                Provider.of<Orders>(context, listen: false)
-                    .addOrder(totalAmount, products);
-                Provider.of<Cart>(context, listen: false).clearCart();
-              },
-              child: Text(
-                'place order!'.toUpperCase(),
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            OrderButton(totalAmount: totalAmount, products: products),
           ],
         ),
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.totalAmount,
+    @required this.products,
+  }) : super(key: key);
+
+  final double totalAmount;
+  final List<CartItem> products;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      textColor: Theme.of(context).primaryColor,
+      onPressed: (isLoading || widget.products.length <= 0)
+          ? null
+          : () async {
+              try {
+                setState(() {
+                  isLoading = true;
+                });
+                await Provider.of<Orders>(context, listen: false)
+                    .addOrder(widget.totalAmount, widget.products);
+                setState(() {
+                  isLoading = false;
+                });
+                Provider.of<Cart>(context, listen: false).clearCart();
+              } catch (error) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Something went wrong'),
+                ));
+              }
+            },
+      child: isLoading
+          ? CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).primaryColor,
+              ),
+            )
+          : Text(
+              'place order!'.toUpperCase(),
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
     );
   }
 }

@@ -61,23 +61,26 @@ class _ProductItemState extends State<ProductItem> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: GridTile(
-          child: Image.network(
-            _product.imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Center(
-              child: Text('error while loading image'),
+          child: Hero(
+            tag: _product.id,
+            child: Image.network(
+              _product.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Center(
+                child: Text('error while loading image'),
+              ),
+              loadingBuilder: (ctx, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes
+                        : null,
+                  ),
+                );
+              },
             ),
-            loadingBuilder: (ctx, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes
-                      : null,
-                ),
-              );
-            },
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
@@ -113,7 +116,7 @@ class _ProductItemState extends State<ProductItem> {
                     ? CircularProgressIndicator()
                     : IconButton(
                         icon: Icon(
-                          _product.isFavorite
+                          product.isFavorite
                               ? Icons.favorite
                               : Icons.favorite_border,
                         ),
@@ -143,7 +146,7 @@ class _ProductItemState extends State<ProductItem> {
                             });
                           }
                         },
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(ctx).accentColor,
                         iconSize: 30,
                       );
               },

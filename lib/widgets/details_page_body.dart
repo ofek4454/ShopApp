@@ -42,13 +42,16 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
               Stack(
                 alignment: Alignment.bottomRight,
                 children: <Widget>[
-                  Container(
-                    height: 300,
-                    width: double.infinity,
-                    child: ClipPath(
-                      clipper: CustomShapeClipper(),
-                      child: Image.network(widget._product.imageUrl,
-                          fit: BoxFit.cover),
+                  Hero(
+                    tag: widget._product.id,
+                    child: Container(
+                      height: 300,
+                      width: double.infinity,
+                      child: ClipPath(
+                        clipper: CustomShapeClipper(),
+                        child: Image.network(widget._product.imageUrl,
+                            fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                   Positioned(
