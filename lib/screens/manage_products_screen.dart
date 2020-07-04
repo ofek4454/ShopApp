@@ -9,14 +9,13 @@ import './edit_product_screen.dart';
 class ManageProductsScreen extends StatelessWidget {
   static const routeName = '/manage-products';
 
-  Future<void> _refresh(ProductsProvider productsProvider) async {
-    await productsProvider.loadProducts();
+  Future<void> _refresh(BuildContext context) async {
+    await Provider.of<ProductsProvider>(context, listen: false)
+        .loadProducts(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    var _productsData = Provider.of<ProductsProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('manage products'),
@@ -30,22 +29,32 @@ class ManageProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: CustomDrawer(routeName),
-      body: RefreshIndicator(
-        onRefresh: () => _refresh(_productsData),
-        child: Padding(
-          padding: EdgeInsets.all(5),
-          child: ListView.builder(
-            itemCount: _productsData.products.length,
-            itemBuilder: (ctx, index) => Column(
-              children: <Widget>[
-                ProductItem.list(_productsData.products[index]),
-                Divider(
-                  color: Colors.black.withOpacity(0.6),
-                ),
-              ],
-            ),
-          ),
-        ),
+      body: FutureBuilder(
+        future: _refresh(context),
+        builder: (ctx, snapshot) =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _refresh(context),
+                    child: Consumer<ProductsProvider>(
+                      builder: (ctx, _productsData, _) => Padding(
+                        padding: EdgeInsets.all(5),
+                        child: ListView.builder(
+                          itemCount: _productsData.products.length,
+                          itemBuilder: (ctx, index) => Column(
+                            children: <Widget>[
+                              ProductItem.list(_productsData.products[index]),
+                              Divider(
+                                color: Colors.black.withOpacity(0.6),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
       ),
     );
   }

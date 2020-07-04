@@ -7,6 +7,7 @@ import '../screens/product_detail_screen.dart';
 import '../providers/products_provider.dart';
 import '../widgets/details_page_body.dart';
 import '../screens/edit_product_screen.dart';
+import '../providers/auth.dart';
 
 enum BuildType {
   Row,
@@ -36,6 +37,7 @@ class _ProductItemState extends State<ProductItem> {
     final scaffold = Scaffold.of(context);
     final _product = Provider.of<Product>(context, listen: false);
     final _cart = Provider.of<Cart>(context, listen: false);
+    final _auth = Provider.of<Auth>(context, listen: false);
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -125,7 +127,8 @@ class _ProductItemState extends State<ProductItem> {
                             setState(() {
                               isLoading = true;
                             });
-                            await product.toggleFavoriteStatus();
+                            await product.toggleFavoriteStatus(
+                                _auth.token, _auth.userId);
                             scaffold.hideCurrentSnackBar();
                             scaffold.showSnackBar(SnackBar(
                               content: Text(product.isFavorite

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/orders_screen.dart';
 import '../screens/manage_products_screen.dart';
+import '../providers/auth.dart';
 
 class CustomDrawer extends StatelessWidget {
   final String currentPage;
@@ -29,6 +31,27 @@ class CustomDrawer extends StatelessWidget {
         } else {
           Navigator.of(ctx).pushReplacementNamed(route);
         }
+      },
+    );
+  }
+
+  Widget _buildLogOutButton(BuildContext context) {
+    return ListTile(
+      leading: Icon(
+        Icons.exit_to_app,
+        size: 28,
+        color: Theme.of(context).errorColor,
+      ),
+      title: Text(
+        'LogOut',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).errorColor,
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        Provider.of<Auth>(context, listen: false).logOut();
       },
     );
   }
@@ -64,8 +87,12 @@ class CustomDrawer extends StatelessWidget {
             height: 20,
           ),
           _buildListTile(context, 'Shop', Icons.shopping_basket, '/'),
-          _buildListTile(context, 'Orders', Icons.history, OrdersScreen.routeName),
-          _buildListTile(context, 'manage products', Icons.edit, ManageProductsScreen.routeName),
+          _buildListTile(
+              context, 'Orders', Icons.history, OrdersScreen.routeName),
+          _buildListTile(context, 'manage products', Icons.edit,
+              ManageProductsScreen.routeName),
+          Spacer(),
+          _buildLogOutButton(context),
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
 import '../providers/Cart.dart';
+import '../providers/auth.dart';
 
 class DetailsPageBody extends StatefulWidget {
   const DetailsPageBody({
@@ -33,6 +34,7 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
   @override
   Widget build(BuildContext context) {
     final _cart = Provider.of<Cart>(context, listen: false);
+    final _auth = Provider.of<Auth>(context, listen: false);
     return SafeArea(
       child: SingleChildScrollView(
         child: Container(
@@ -68,7 +70,8 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
                         ),
                         onPressed: () {
                           setState(() {
-                            widget._product.toggleFavoriteStatus();
+                            widget._product.toggleFavoriteStatus(
+                                _auth.token, _auth.userId);
                           });
                         },
                       ),
