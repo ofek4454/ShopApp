@@ -113,10 +113,13 @@ class ProductsProvider with ChangeNotifier {
     const url = 'https://shopapp-4bde7.firebaseio.com/products.json';
     try {
       final response = await http.get(url);
-      print('done');
+      print('done load products');
       final loadedData = json.decode(response.body) as Map<String, dynamic>;
       // print(json.decode(response.body));
       final List<Product> loadedProducts = [];
+      if (loadedData == null) {
+        return;
+      }
       loadedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,

@@ -40,7 +40,13 @@ class _ProductsOverViewScreenState extends State<ProductsOverViewScreen> {
             context: context,
             builder: (ctx) => AlertDialog(
                   title: Text('Error while loading'),
-                  content: Text(error),
+                  content: Text(error.toString()),
+                  actions: [
+                    FlatButton(
+                      child: Text('close'),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                  ],
                 ));
       }).then((_) {
         setState(() {

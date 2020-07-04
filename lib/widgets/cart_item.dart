@@ -25,11 +25,11 @@ class CartItem extends StatelessWidget {
             actions: <Widget>[
               FlatButton(
                 child: Text('cancel'),
-                onPressed: () =>Navigator.of(ctx).pop(false),
+                onPressed: () => Navigator.of(ctx).pop(false),
               ),
               FlatButton(
                 child: Text('confirm'),
-                onPressed: () =>Navigator.of(ctx).pop(true),
+                onPressed: () => Navigator.of(ctx).pop(true),
               ),
             ],
           ),
@@ -86,7 +86,7 @@ class CartItem extends StatelessWidget {
                   ),
                   onPressed: () => _cart.addItem(product),
                 ),
-                Text('\$${(product.price * quantity)}'),
+                Text('\$${(product.price * quantity).toStringAsFixed(2)}'),
               ],
             ),
           ),

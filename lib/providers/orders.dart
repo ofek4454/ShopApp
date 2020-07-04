@@ -23,28 +23,29 @@ class Orders with ChangeNotifier {
       final response = await http.get(url);
       print('done load orders');
       final loadedData = json.decode(response.body) as Map<String, dynamic>;
-      final List<CartItem> cartItems = [];
-      final List<Map<String, Object>> products =
-          loadedData['products'] as List<Map<String, Object>>;
-      products.forEach(
-        (item) => cartItems.add(
-          CartItem(
-            quantity: item['quantity'],
-            product: productsProvider.getProductById(
-              item['prodId'],
-            ),
-          ),
-        ),
-      );
       final List<OrderItem> loadedOrders = [];
-      loadedData.forEach((orderId, orderData) {
-        loadedOrders.add(
-          OrderItem(
-              id: orderId,
-              amount: orderData['amount'],
-              date: DateTime.parse(orderData['date']),
-              products: cartItems),
-        );
+
+      loadedData.forEach((key, value) {
+        final List<CartItem> cartItems = [];
+        final List<dynamic> products = loadedData[key]['products'];
+        for (int i = 0; i < products.length; i++) {
+          cartItems.add(
+            CartItem(
+              quantity: products[i]['quantity'],
+              product: productsProvider.getProductById(
+                products[i]['prodId'],
+              ),
+            ),
+          );
+        }
+        loadedOrders.insert(
+            0,
+            OrderItem(
+              id: key,
+              amount: value['amount'],
+              date: DateTime.parse(value['date']),
+              products: cartItems,
+            ));
       });
       items = loadedOrders;
       notifyListeners();
@@ -65,7 +66,7 @@ class Orders with ChangeNotifier {
             'date': date.toIso8601String(),
             'products': products
                 .map((cp) => {
-                      'pordId': cp.product.id,
+                      'prodId': cp.product.id,
                       'quantity': cp.quantity,
                     })
                 .toList(),
