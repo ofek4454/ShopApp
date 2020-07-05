@@ -65,24 +65,33 @@ class _ProductItemState extends State<ProductItem> {
         child: GridTile(
           child: Hero(
             tag: _product.id,
-            child: Image.network(
-              _product.imageUrl,
+            child: FadeInImage(
+              image: NetworkImage(_product.imageUrl),
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Center(
-                child: Text('error while loading image'),
-              ),
-              loadingBuilder: (ctx, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes
-                        : null,
-                  ),
-                );
-              },
+              fadeInDuration: Duration(milliseconds: 500),
+              fadeInCurve: Curves.fastOutSlowIn,
+              placeholder: AssetImage('assets/images/placeHolder.jpg'),
+              imageErrorBuilder: (context, error, stackTrace) =>
+                  Center(child: Text('error while loading image')),
             ),
+            //  Image.network(
+            //   _product.imageUrl,
+            //   fit: BoxFit.cover,
+            //   errorBuilder: (context, error, stackTrace) => Center(
+            //     child: Text('error while loading image'),
+            //   ),
+            //   loadingBuilder: (ctx, child, loadingProgress) {
+            //     if (loadingProgress == null) return child;
+            //     return Center(
+            //       child: CircularProgressIndicator(
+            //         value: loadingProgress.expectedTotalBytes != null
+            //             ? loadingProgress.cumulativeBytesLoaded /
+            //                 loadingProgress.expectedTotalBytes
+            //             : null,
+            //       ),
+            //     );
+            //   },
+            // ),
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,

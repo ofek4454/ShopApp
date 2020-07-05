@@ -70,8 +70,7 @@ class Auth with ChangeNotifier {
         },
       );
       prefs.setString('userData', userData);
-      print('prefs put String');
-      prefs.commit();
+      prefs.setString('lastEmail', email);
     } catch (error) {
       throw error;
     }
