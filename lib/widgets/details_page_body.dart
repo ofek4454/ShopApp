@@ -44,6 +44,13 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
               Stack(
                 alignment: Alignment.bottomRight,
                 children: <Widget>[
+                  ClipPath(
+                    clipper: CustomShapeClipper(expand: true),
+                    child: Container(
+                      height: 300,
+                      decoration: BoxDecoration(color: Colors.black26),
+                    ),
+                  ),
                   Hero(
                     tag: widget._product.id,
                     child: Container(
@@ -57,7 +64,7 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
+                    bottom: 0,
                     right: 10,
                     child: CircleAvatar(
                       radius: 25,
@@ -126,14 +133,23 @@ class _DetailsPageBodyState extends State<DetailsPageBody> {
 }
 
 class CustomShapeClipper extends CustomClipper<Path> {
+  final expand;
+
+  CustomShapeClipper({this.expand = false});
   @override
   Path getClip(Size size) {
     var path = Path();
-
-    path.lineTo(0.0, 190);
-    path.quadraticBezierTo(size.width / 2, 300, size.width, 190);
-    path.lineTo(size.width, 0.0);
-    path.close();
+    if (expand) {
+      path.lineTo(0.0, 223);
+      path.quadraticBezierTo(size.width / 2, 333, size.width, 223);
+      path.lineTo(size.width, 0.0);
+      path.close();
+    } else {
+      path.lineTo(0.0, 220);
+      path.quadraticBezierTo(size.width / 2, 330, size.width, 220);
+      path.lineTo(size.width, 0.0);
+      path.close();
+    }
     return path;
   }
 

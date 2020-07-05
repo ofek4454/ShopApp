@@ -43,41 +43,48 @@ class _OrderItemState extends State<OrderItem> {
               thickness: 2,
               color: Colors.black38,
             ),
-          if (isExpanded)
-            Container(
-              margin: EdgeInsets.only(top: 5),
-              height: min(100 + widget.order.products.length * 20.0, 180),
-              child: ListView.builder(
-                itemCount: widget.order.products.length,
-                itemBuilder: (ctx, index) {
-                  return LayoutBuilder(
-                    builder: (ctx, constraints) => Card(
-                      elevation: 7,
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      child: ListTile(
-                        leading: Container(
-                          height: constraints.maxWidth * 0.15,
-                          width: constraints.maxWidth * 0.15,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: NetworkImage(widget
-                                  .order.products[index].product.imageUrl),
-                              fit: BoxFit.fitWidth,
-                            ),
+          AnimatedContainer(
+            duration: Duration(milliseconds: 800),
+            curve: Curves.fastOutSlowIn,
+            margin: EdgeInsets.only(top: 5),
+            height: isExpanded
+                ? min(100 + widget.order.products.length * 20.0, 180)
+                : 0,
+            constraints: BoxConstraints(
+                minHeight: isExpanded
+                    ? min(100 + widget.order.products.length * 20.0, 180)
+                    : 0),
+            child: ListView.builder(
+              itemCount: widget.order.products.length,
+              itemBuilder: (ctx, index) {
+                return LayoutBuilder(
+                  builder: (ctx, constraints) => Card(
+                    elevation: 7,
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: ListTile(
+                      leading: Container(
+                        height: constraints.maxWidth * 0.15,
+                        width: constraints.maxWidth * 0.15,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                widget.order.products[index].product.imageUrl),
+                            fit: BoxFit.fitWidth,
                           ),
                         ),
-                        title: Text(widget.order.products[index].product.title),
-                        subtitle: Text(
-                            '${widget.order.products[index].quantity} x \$${widget.order.products[index].product.price}'),
-                        trailing: Text(
-                            '\$${(widget.order.products[index].product.price * widget.order.products[index].quantity).toStringAsFixed(2)}'),
                       ),
+                      title: Text(widget.order.products[index].product.title),
+                      subtitle: Text(
+                          '${widget.order.products[index].quantity} x \$${widget.order.products[index].product.price}'),
+                      trailing: Text(
+                          '\$${(widget.order.products[index].product.price * widget.order.products[index].quantity).toStringAsFixed(2)}'),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
+          ),
         ],
       ),
     );

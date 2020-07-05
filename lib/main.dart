@@ -13,6 +13,7 @@ import './screens/manage_products_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/splash_screen.dart';
+import './helpers/customRouteTransition.dart';
 
 void main() {
   runApp(MyApp());
@@ -52,6 +53,12 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.indigo,
             accentColor: Colors.lime,
             fontFamily: 'Anton',
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: {
+                //TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              },
+            ),
           ),
           home: auth.isAuth
               ? ProductsOverViewScreen()
